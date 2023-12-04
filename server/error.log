@@ -1,0 +1,11 @@
+{"level":"error","message":"self.log is not a function. (In 'self.log(level, ...args)', 'self.log' is undefined)","service":"BAO"}
+{"level":"error","message":"Can't find variable: getAllMeshes","service":"BAO"}
+{"level":"error","message":"No such file or directory","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"No such file or directory\",\"context\":\"customErrorHandler\",\"debugPayload\":{\"method\":\"GET\",\"path\":\"/mesh/bunny\",\"query\":{},\"body\":{}}}","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"No such file or directory\",\"context\":\"customErrorHandler\",\"debugPayload\":{\"method\":\"GET\",\"path\":\"/mesh/bunny\",\"query\":{},\"body\":{}}}","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"No such file or directory\",\"context\":\"customErrorHandler\",\"debugPayload\":{\"method\":\"GET\",\"path\":\"/mesh/bunny\",\"query\":{},\"body\":{}}}","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"No such file or directory\",\"context\":\"customErrorHandler\",\"debugPayload\":{\"method\":\"GET\",\"path\":\"/mesh/bunny\",\"query\":{},\"body\":{}}}","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"No such file or directory\",\"context\":\"customErrorHandler\",\"debug\":{\"method\":\"GET\",\"path\":\"/mesh/bunny\",\"query\":{},\"body\":{}}}","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"Could not find node file /Users/jarredparr/Documents/Projects/BAO-ts/server/meshes/bunny.1.node\",\"context\":\"customErrorHandler\",\"debug\":{\"method\":\"GET\",\"path\":\"/mesh/bunny\",\"query\":{},\"body\":{}}}","service":"BAO"}
+{"level":"error","message":"Can't find variable: SimRouter","service":"BAO"}
+{"level":"error","message":"{\"error\":true,\"code\":500,\"message\":\"Could not find node file /Users/jarredparr/Documents/Projects/BAO-ts/server/src/controllers/meshes/bunny/bunny.1.node\",\"context\":\"customErrorHandler\",\"debug\":{\"method\":\"POST\",\"path\":\"/sim\",\"query\":{},\"body\":{}}}","service":"BAO"}
