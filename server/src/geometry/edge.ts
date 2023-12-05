@@ -1,41 +1,40 @@
-import { Matrix, matrix, norm, subtract, divide } from "mathjs";
-import { l2Norm } from "./triangles";
+import Vector from "../linear-algebra/vector";
 
 export default class Edge {
-  public v1: Matrix;
-  public v2: Matrix;
+  public v1: Vector;
+  public v2: Vector;
 
   // The edge between v1 and v2
-  public edge: Matrix;
+  public edge: Vector;
 
   // The normalized edge
-  public edgeNormalized: Matrix;
+  public edgeNormalized: Vector;
 
   // The length of the edge
   public length: number;
 
-  constructor(v1: Matrix | number[], v2: Matrix | number[]) {
-    if (v1 instanceof Matrix) {
+  constructor(v1: Vector | number[], v2: Vector | number[]) {
+    if (v1 instanceof Vector) {
       this.v1 = v1;
     } else {
-      this.v1 = matrix(v1);
+      this.v1 = Vector.fromArray(v1);
     }
 
-    if (v2 instanceof Matrix) {
+    if (v2 instanceof Vector) {
       this.v2 = v2;
     } else {
-      this.v2 = matrix(v2);
+      this.v2 = Vector.fromArray(v2);
     }
 
-    this.edge = subtract(this.v2, this.v1);
+    this.edge = this.v2.sub(this.v1);
 
-    this.length = l2Norm(this.edge);
+    this.length = this.edge.norm();
 
-    this.edgeNormalized = this.edge.map((x: number) => divide(x, this.length));
+    this.edgeNormalized = this.edge.normalized();
   }
 }
 
-export function verticesToEdges(vertices: Matrix[] | number[][]): Edge[] {
+export function verticesToEdges(vertices: Vector[] | number[][]): Edge[] {
   const edges: Edge[] = [];
 
   for (let i = 0; i < vertices.length - 1; i++) {

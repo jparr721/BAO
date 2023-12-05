@@ -1,6 +1,4 @@
-import * as math from "mathjs";
-import { l2Norm } from "../geometry/triangles";
-import { Vector } from "../linear-algebra/vector";
+import Vector from "../linear-algebra/vector";
 
 export abstract class LinearMaterial {
   protected name: string;
@@ -38,7 +36,7 @@ export abstract class LinearMaterial {
       const finiteDiff = Vector.zero(4);
 
       for (let i = 0; i < 4; i++) {
-        const xNew = math.clone(x);
+        const xNew = x.clone();
 
         // Perturb the input slightly
         xNew.set(i, x.get(i) + eps);
@@ -59,10 +57,10 @@ export abstract class LinearMaterial {
       }
 
       if (e === 4 && minSeen > 1e-6) {
-        console.log("Test failed for " + this.name + " with error " + minSeen);
-        console.log("PK1: " + pk10);
-        console.log("psi0: " + psi0);
-        console.log("Finite Difference: " + finiteDiff);
+        console.log("Test failed for ", this.name, " with error ", minSeen);
+        console.log("PK1: ", pk10.values);
+        console.log("psi0: ", psi0);
+        console.log("Finite Difference: ", finiteDiff.values);
         return false;
       }
 

@@ -19,6 +19,7 @@ const customErrorHandler = (
     path: req.path,
     query: req.query,
     body: req.body,
+    stackTrace: err.stack,
   };
 
   errorResponse(statusCode)(res, message, "customErrorHandler", debugPayload);

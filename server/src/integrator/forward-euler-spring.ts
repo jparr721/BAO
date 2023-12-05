@@ -1,9 +1,8 @@
 import { TriangleMesh } from "../geometry/triangle-mesh";
-import { constructDiagonalSparseMatrix, l2Norm } from "../geometry/triangles";
+import { constructDiagonalSparseMatrix } from "../geometry/triangles";
+import Vector from "../linear-algebra/vector";
 import { LinearMaterial } from "../material/material";
-import { matrixSize } from "../utils";
 import SpringIntegrator from "./spring-integrator";
-import * as math from "mathjs";
 
 export default class ForwardEulerSpring extends SpringIntegrator {
   constructor(
@@ -29,43 +28,33 @@ export default class ForwardEulerSpring extends SpringIntegrator {
 
     // Compute the update
     const dt2 = this.dt * this.dt;
-    const internalExternalForce = math.add(R, this.externalForces);
-    const velocityTerm = math.add(this.dt, this.velocity);
+    const internalExternalForce = R.add(this.externalForces);
+    const velocityTerm = this.velocity.add(this.dt);
 
-    let u = math.add(
-      math.multiply(math.multiply(dt2, this.mesh.Minv), internalExternalForce),
-      velocityTerm
-    ) as math.Matrix;
-
-    // Sanity check
-    if (matrixSize(u).rows !== this.mesh.DOFs()) {
-      throw new Error(
-        `Size of u ${
-          matrixSize(u).rows
-        } does not match DOFs ${this.mesh.DOFs()}`
-      );
-    }
+    let u = this.mesh.Minv.mul(dt2)
+      .mul(internalExternalForce)
+      .add(velocityTerm);
 
     // Pin any pinned vertices
-    const pinned = math.matrix(math.zeros([this.mesh.DOFs(), 1]));
+    const pinned = Vector.zero(this.mesh.DOFs());
     for (let i = 0; i < this.mesh.pinnedVertices.length; i++) {
       const index = this.mesh.pinnedVertices[i];
       if (index) {
-        pinned.subset(math.index([i * 2, i * 2 + 1], [0]), 0);
+        pinned.set([i * 2, i * 2 + 1], [0, 0]);
       }
     }
 
     const filter = constructDiagonalSparseMatrix(pinned);
 
     // Velocity update
-    this.velocity = math.divide(u, this.dt) as math.Matrix;
+    this.velocity = u.div(this.dt);
 
     // Filter out the pinned velocities.
-    this.velocity = math.multiply(filter, this.velocity) as math.Matrix;
+    this.velocity = filter.mul(this.velocity);
 
     const positions = this.mesh.positions();
-    u = math.multiply(filter, u) as math.Matrix;
-    u = math.add(positions, u) as math.Matrix;
+    u = filter.mul(u);
+    u.addInPlace(positions);
     this.mesh.setPositions(u);
   }
 }

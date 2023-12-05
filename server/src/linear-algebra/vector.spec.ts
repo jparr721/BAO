@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { Vector } from "./vector";
+import Vector from "./vector";
 
 describe("Vector", () => {
   describe("add", () => {
@@ -81,8 +81,8 @@ describe("Vector", () => {
     test("set multiple indices", () => {
       const v1 = new Vector(1, 2, 3, 4, 5);
       v1.set([0, 1, 2], [10, 11, 12]);
-
-      expect(v1.values).toEqual([10, 11, 12, 4, 5]);
+      v1.set([3, 4], [13, 14]);
+      expect(v1.values).toEqual([10, 11, 12, 13, 14]);
     });
   });
 

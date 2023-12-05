@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from "fs";
-import * as math from "mathjs";
+import Vector from "../linear-algebra/vector";
 
-function readNodeFile(filename: string): math.Matrix[] {
+function readNodeFile(filename: string): Vector[] {
   // Open filename and read it line by line
   return readFileSync(filename, "utf-8")
     .split(/\r?\n/)
@@ -22,13 +22,13 @@ function readNodeFile(filename: string): math.Matrix[] {
       if (split.length >= 3) {
         const x = parseFloat(split[1]);
         const y = parseFloat(split[2]);
-        return math.matrix([x, y]);
+        return new Vector(x, y);
       }
     })
-    .filter((x) => x !== undefined) as math.Matrix[];
+    .filter((x) => x !== undefined) as Vector[];
 }
 
-function readEleFile(filename: string): math.Matrix[] {
+function readEleFile(filename: string): Vector[] {
   return readFileSync(filename, "utf-8")
     .split(/\r?\n/)
     .map((line, i) => {
@@ -48,15 +48,15 @@ function readEleFile(filename: string): math.Matrix[] {
         const i = parseInt(split[1]) - 1;
         const j = parseInt(split[2]) - 1;
         const k = parseInt(split[3]) - 1;
-        return math.matrix([i, j, k]);
+        return new Vector(i, j, k);
       }
     })
-    .filter((x) => x !== undefined) as math.Matrix[];
+    .filter((x) => x !== undefined) as Vector[];
 }
 
 export default function readTriangles2D(prefix: string): {
-  vertices: math.Matrix[];
-  triangles: math.Matrix[];
+  vertices: Vector[];
+  triangles: Vector[];
 } {
   // Loads a volumetric triangle mesh from node/ele format (i.e. del triangualtion).
   const nodeFile = prefix + ".node";

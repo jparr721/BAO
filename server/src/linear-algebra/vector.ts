@@ -1,16 +1,26 @@
+import zip from "lodash/zip";
+
 function checkLengths(target: any, propertyName: string, descriptor: any) {
   const originalMethod = descriptor.value;
-  descriptor.value = function (other: Vector) {
-    if (this._values.length !== other.values.length) {
-      throw new Error(
-        `Vector lengths do not match: ${this._values.length} and ${other.values.length}`
-      );
+  descriptor.value = function (other: number | number[] | Vector) {
+    if (other instanceof Vector) {
+      if (this._values.length !== other.values.length) {
+        throw new Error(
+          `Vector lengths do not match: ${this._values.length} and ${other.values.length}`
+        );
+      }
+    } else if (Array.isArray(other)) {
+      if (this._values.length !== other.length) {
+        throw new Error(
+          `Vector lengths do not match: ${this._values.length} and ${other.length}`
+        );
+      }
     }
     return originalMethod.apply(this, [other]);
   };
 }
 
-export class Vector {
+export default class Vector {
   private _values: number[];
 
   constructor(...values: number[]) {
@@ -23,6 +33,14 @@ export class Vector {
 
   public static one(size: number): Vector {
     return new Vector(...Array(size).fill(1));
+  }
+
+  public static random(size: number): Vector {
+    return new Vector(
+      ...Array(size)
+        .fill(0)
+        .map(() => Math.random())
+    );
   }
 
   public static fromArray(array: number[]): Vector {
@@ -81,10 +99,23 @@ export class Vector {
     return this._values.length;
   }
 
+  public slice(start: number, end: number): Vector {
+    return new Vector(...this._values.slice(start, end));
+  }
+
+  public add(other: number): Vector;
+  public add(other: Vector): Vector;
   @checkLengths
-  public add(other: Vector): Vector {
-    const newValues = this._values.map((v, i) => v + other._values[i]);
-    return new Vector(...newValues);
+  public add(other: number | Vector): Vector {
+    if (other instanceof Vector) {
+      const newValues = this._values.map((v, i) => v + other._values[i]);
+      return new Vector(...newValues);
+    } else if (typeof other === "number") {
+      const newValues = this._values.map((v) => v + other);
+      return new Vector(...newValues);
+    }
+
+    throw new Error(`Invalid type ${typeof other}`);
   }
 
   @checkLengths
@@ -161,26 +192,45 @@ export class Vector {
 
   public set(index: number, value: number): void;
   public set(index: number[], value: number[]): void;
-  public set(index: number | number[], value: number | number[]): void {
+  public set(index: number[], value: Vector): void;
+  public set(
+    index: number | number[],
+    value: number | number[] | Vector
+  ): void {
     if (typeof index === "number") {
       if (Array.isArray(value)) {
         throw new Error("Cannot assign more than one value to a single index.");
       }
 
+      if (value instanceof Vector) {
+        throw new Error("Cannot assign a vector to a single index.");
+      }
+
       this._values[index] = value;
     } else if (Array.isArray(index)) {
-      if (!Array.isArray(value)) {
-        throw new Error("Cannot assign single value to more than one index");
-      }
+      // Iterate index and values at the same time
+      if (Array.isArray(value)) {
+        if (index.length !== value.length) {
+          throw new Error(
+            `Index and value lengths do not match: ${index.length} and ${value.length}`
+          );
+        }
 
-      if (index.length !== value.length) {
-        throw new Error(
-          `Index and value lengths do not match: ${index.length} and ${value.length}`
-        );
-      }
+        zip(index, value).forEach(([i, v]) => {
+          this._values[i!] = v!;
+        });
+      } else if (value instanceof Vector) {
+        if (index.length !== value.length) {
+          throw new Error(
+            `Index and value lengths do not match: ${index.length} and ${value.length}`
+          );
+        }
 
-      for (const i of index) {
-        this._values[i] = value[i];
+        zip(index, value.values).forEach(([i, v]) => {
+          this._values[i!] = v!;
+        });
+      } else {
+        throw new Error(`Invalid value type '${typeof value}'`);
       }
     } else {
       throw new Error(`Invalid index type ${typeof index}`);
@@ -197,5 +247,9 @@ export class Vector {
     }
 
     throw new Error(`Invalid index type ${typeof index}`);
+  }
+
+  public toString(): string {
+    return `${this.values.join(", ")}`;
   }
 }

@@ -6,6 +6,7 @@ import ForwardEulerSpring from "../integrator/forward-euler-spring";
 import { mkdirSync } from "fs";
 import { join } from "path";
 import { ok } from "./http-response";
+import Vector from "../linear-algebra/vector";
 
 export async function runSimulation(req: Request, res: Response) {
   const { vertices, triangles } = readTriangles2D(
@@ -15,7 +16,7 @@ export async function runSimulation(req: Request, res: Response) {
   const material = new MassSpring(1.0, 1);
   const integrator = new ForwardEulerSpring(mesh, material, 1.0 / 200.0);
 
-  integrator.addGravity([0, -90.8]);
+  integrator.addGravity(Vector.fromArray([0, -90.8]));
 
   mkdirSync("simOutput", { recursive: true });
   integrator.mesh.saveFrameToObj("simOutput/frame_0.obj");
@@ -24,15 +25,15 @@ export async function runSimulation(req: Request, res: Response) {
     frames: [],
   };
 
-  let v = integrator.mesh.vertices.map((v) => v._data[0]);
-  let f = integrator.mesh.triangles.map((v) => v._data[0]);
+  let v = integrator.mesh.vertices.map((v) => v.values).flat();
+  let f = integrator.mesh.triangles.map((v) => v.values).flat();
 
   responsePayload.frames.push({ v, f });
 
   for (let i = 0; i < 100; i++) {
     integrator.step();
-    v = integrator.mesh.vertices.map((v) => v._data[0]);
-    f = integrator.mesh.triangles.map((v) => v._data[0]);
+    v = integrator.mesh.vertices.map((v) => v.values).flat();
+    f = integrator.mesh.triangles.map((v) => v.values).flat();
     responsePayload.frames.push({ v, f });
     integrator.mesh.saveFrameToObj(`simOutput/frame_${i + 1}.obj`);
   }

@@ -1,13 +1,13 @@
 import { expect, test, describe } from "bun:test";
 import MassSpring from "./mass-spring";
-import * as math from "mathjs";
+import Vector from "../linear-algebra/vector";
 
 describe("MassSpring", () => {
   test("psi", () => {});
 
   test("convergence", () => {
     const massSpring = new MassSpring(1.0, 1.0);
-    const randomX = math.matrix(math.random([4, 1]));
+    const randomX = Vector.random(4);
     expect(massSpring.finiteDifferenceTestForces(randomX)).toBe(true);
   });
 });
