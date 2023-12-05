@@ -1,5 +1,6 @@
 import * as math from "mathjs";
 import { l2Norm } from "../geometry/triangles";
+import { Vector } from "../linear-algebra/vector";
 
 export abstract class LinearMaterial {
   protected name: string;
@@ -12,21 +13,21 @@ export abstract class LinearMaterial {
    * Computes the strain energy density for the (hypter)ealstic material.
    * @param F The deformation gradient
    */
-  abstract psi(x: math.Matrix): number;
+  abstract psi(x: Vector): number;
 
   /**
    * Computes the first piola-kirchoff stress tensor for the (hypter)elastic material.
    * @param F The deformation gradient
    */
-  abstract PK1(x: math.Matrix): math.Matrix;
+  abstract PK1(x: Vector): Vector;
 
   /**
    * Computes the hessian matrix for the (hyper)elastic material.
    * @param F The deformation gradient
    */
-  abstract hessian(x: math.Matrix): math.Matrix;
+  abstract hessian(x: Vector): Vector;
 
-  finiteDifferenceTestForces(x: math.Matrix): boolean {
+  finiteDifferenceTestForces(x: Vector): boolean {
     const psi0 = this.psi(x);
     const pk10 = this.PK1(x);
 
@@ -34,24 +35,24 @@ export abstract class LinearMaterial {
     let e = 0;
     let minSeen = Number.MAX_VALUE;
     while (eps > 1e-8) {
-      const finiteDiff = math.matrix(math.zeros([4, 1]));
+      const finiteDiff = Vector.zero(4);
 
       for (let i = 0; i < 4; i++) {
         const xNew = math.clone(x);
 
         // Perturb the input slightly
-        xNew.set([i, 0], x.get([i, 0]) + eps);
+        xNew.set(i, x.get(i) + eps);
 
         // Compute the new energy value
         const psiP = this.psi(xNew);
 
         // Store the finite difference
-        finiteDiff.set([i, 0], (psiP - psi0) / eps);
+        finiteDiff.set(i, (psiP - psi0) / eps);
       }
 
       // Compute the error
-      const diff = math.subtract(pk10, finiteDiff);
-      const error = l2Norm(diff);
+      const diff = pk10.sub(finiteDiff);
+      const error = diff.norm();
 
       if (error < minSeen) {
         minSeen = error;

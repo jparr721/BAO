@@ -17,6 +17,10 @@
     "allowJs": true,
     "types": [
       "bun-types" // add Bun global
-    ]
+    ],
+
+    // Decorator support
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
   }
 }

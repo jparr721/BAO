@@ -12,6 +12,7 @@ import DetailItem from './components/detail-item';
 import Mesh from './components/mesh';
 import { useQuery } from '@tanstack/react-query';
 import { runSimulation } from './net/sim';
+import { MouseEvent, useState } from 'react';
 
 extend({ ArcballControls });
 
@@ -29,11 +30,18 @@ export default function App() {
     queryKey: ['runSimBunny'], queryFn: runSimulation,
   });
 
+  const [currentMesh, setCurrentMesh] = useState({ v: [], f: [] });
+
   if (query.isLoading) {
     return <h1>Loading...</h1>;
-  } else {
-    console.log(query.data);
   }
+
+  const setMesh = (e) => {
+    console.log('loading frame', e.target.value);
+    console.log(query.data?.data?.frames[e.target.value]);
+    setCurrentMesh(query.data?.data?.frames[e.target.value]);
+  };
+
 
   return (
     <div className='fullscreen'>
@@ -65,20 +73,21 @@ export default function App() {
                 <OrthographicCamera position={[0, 0, 5]} />
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                {/* <Mesh vertices={[
+                <Mesh vertices={[
                   -0.5, -0.5,
                   0.5, -0.5,
                   0.0, 0.5]}
-                  faces={[0, 1, 2]}
-                  position={[0, 0, 0]}
-                /> */}
+                  faces={[0, 1, 2]} />
+                {currentMesh && currentMesh.v.length > 0 && <Mesh vertices={currentMesh.v}
+                  faces={currentMesh.f}
+                />}
                 <CameraControls />
               </Canvas>
             </GridItem>
             <GridItem flex={1}>
               <SidePanel title="Frames">
                 <ListView>
-                  {[...Array(query.data?.data?.frames?.length)].map((_, i) => <ListItem key={i}>Frame {i}</ListItem>)}
+                  {[...Array(query.data?.data?.frames?.length)].map((_, i) => <ListItem onClick={e => setMesh(e)} key={i}>Frame {i}</ListItem>)}
                 </ListView>
               </SidePanel>
             </GridItem>

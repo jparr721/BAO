@@ -1,8 +1,8 @@
-import { Matrix } from "mathjs";
 import { LinearMaterial } from "./material";
 import { matrixSize } from "../utils";
 import * as math from "mathjs";
 import { l2Norm } from "../geometry/triangles";
+import { Vector } from "../linear-algebra/vector";
 
 /**
  * A mass-spring material.
@@ -19,13 +19,10 @@ export default class MassSpring extends LinearMaterial {
     this.kover2 = this.stiffness / 2.0;
   }
 
-  psi(x: Matrix): number {
+  psi(x: Vector): number {
     // Make sure x is length 4
-    const sz = matrixSize(x);
-    if (sz.rows !== 4 || sz.cols !== 1) {
-      throw new Error(
-        `Invalid input dimension for x, got ${sz.rows}x${sz.cols}, wanted 4x1.`
-      );
+    if (x.rows !== 4) {
+      throw new Error("x must be length 4");
     }
 
     // p0 is the first three rows of x
@@ -42,7 +39,7 @@ export default class MassSpring extends LinearMaterial {
     return this.kover2 * diff * diff;
   }
 
-  PK1(x: Matrix): Matrix {
+  PK1(x: Vector): Vector {
     // p0 is the first three rows of x
     const p0 = x.subset(math.index([0, 1], [0]));
 
@@ -54,7 +51,7 @@ export default class MassSpring extends LinearMaterial {
     const diff = l2Norm(math.subtract(p1, p0));
 
     // Compute the coefficient of (P_1 - P_0 / ||P_1 - P_0||) in the gradient
-    const mult = math.zeros(4) as math.Matrix;
+    const mult = Vector.zeros(4);
 
     // The first three entries are (p0 - p1)
     mult.subset(
@@ -71,10 +68,10 @@ export default class MassSpring extends LinearMaterial {
     return math.divide(
       math.multiply(mult, diff - this.restLength),
       diff
-    ) as Matrix;
+    ) as Vector;
   }
 
-  hessian(x: Matrix): Matrix {
+  hessian(x: Vector): Vector {
     throw new Error("Method not implemented.");
   }
 }
