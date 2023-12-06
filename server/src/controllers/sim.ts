@@ -13,29 +13,36 @@ export async function runSimulation(req: Request, res: Response) {
     join(import.meta.dir, "..", "..", "/meshes/bunny/bunny.1")
   );
   const mesh = new TriangleMesh(vertices, triangles, 5 /* uniformMass */);
+
+  // Pin the top 5% of vertices
+  const pinned = mesh.vertices.map((v) => v.y > 0);
+  mesh.pinnedVertices = pinned;
+
   const material = new MassSpring(1.0, 1);
   const integrator = new ForwardEulerSpring(mesh, material, 1.0 / 200.0);
 
-  integrator.addGravity(Vector.fromArray([0, -90.8]));
+  integrator.addGravity(Vector.fromArray([0, -900.8]));
 
   mkdirSync("simOutput", { recursive: true });
   integrator.mesh.saveFrameToObj("simOutput/frame_0.obj");
 
-  const responsePayload: { frames: { v: number[]; f: number[] }[] } = {
+  const responsePayload: {
+    frames: { vertices: number[]; indices: number[] }[];
+  } = {
     frames: [],
   };
 
   let v = integrator.mesh.vertices.map((v) => v.values).flat();
-  let f = integrator.mesh.triangles.map((v) => v.values).flat();
+  let i = integrator.mesh.triangles.map((v) => v.values).flat();
 
-  responsePayload.frames.push({ v, f });
+  responsePayload.frames.push({ vertices: v, indices: i });
 
-  for (let i = 0; i < 100; i++) {
+  for (let idx = 0; idx < 1; idx++) {
     integrator.step();
     v = integrator.mesh.vertices.map((v) => v.values).flat();
-    f = integrator.mesh.triangles.map((v) => v.values).flat();
-    responsePayload.frames.push({ v, f });
-    integrator.mesh.saveFrameToObj(`simOutput/frame_${i + 1}.obj`);
+    i = integrator.mesh.triangles.map((v) => v.values).flat();
+    responsePayload.frames.push({ vertices: v, indices: i });
+    // integrator.mesh.saveFrameToObj(`simOutput/frame_${idx + 1}.obj`);
   }
 
   ok(res, responsePayload);

@@ -1,6 +1,4 @@
 import './App.css';
-import { Canvas, extend, useThree } from '@react-three/fiber';
-import { ArcballControls, OrthographicCamera } from '@react-three/drei';
 import GridContainer from './components/grid-container';
 import GridItem from './components/grid-item';
 import MenuButton from './components/menu-button';
@@ -9,21 +7,10 @@ import SidePanel from './components/side-panel';
 import ListView from './components/list-view';
 import ListItem from './components/list-item';
 import DetailItem from './components/detail-item';
-import Mesh from './components/mesh';
 import { useQuery } from '@tanstack/react-query';
 import { runSimulation } from './net/sim';
-import { MouseEvent, useState } from 'react';
-
-extend({ ArcballControls });
-
-function CameraControls() {
-  const {
-    camera,
-    gl: { domElement },
-  } = useThree();
-
-  return <ArcballControls args={[camera, domElement]} enableRotate={false} enablePan={true} />;
-}
+import { useState } from 'react';
+import Scene from './components/scene';
 
 export default function App() {
   const query = useQuery({
@@ -31,10 +18,6 @@ export default function App() {
   });
 
   const [currentMesh, setCurrentMesh] = useState({ v: [], f: [] });
-
-  if (query.isLoading) {
-    return <h1>Loading...</h1>;
-  }
 
   const setMesh = (e) => {
     console.log('loading frame', e.target.value);
@@ -69,20 +52,7 @@ export default function App() {
               </SidePanel>
             </GridItem>
             <GridItem flex={6}>
-              <Canvas>
-                <OrthographicCamera position={[0, 0, 5]} />
-                <ambientLight />
-                <pointLight position={[10, 10, 10]} />
-                <Mesh vertices={[
-                  -0.5, -0.5,
-                  0.5, -0.5,
-                  0.0, 0.5]}
-                  faces={[0, 1, 2]} />
-                {currentMesh && currentMesh.v.length > 0 && <Mesh vertices={currentMesh.v}
-                  faces={currentMesh.f}
-                />}
-                <CameraControls />
-              </Canvas>
+              {query.isLoading ? <h1>Loading Scene</h1> : <Scene meshes={query.data?.data?.frames} />}
             </GridItem>
             <GridItem flex={1}>
               <SidePanel title="Frames">

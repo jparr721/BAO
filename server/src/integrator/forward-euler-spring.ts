@@ -23,26 +23,24 @@ export default class ForwardEulerSpring extends SpringIntegrator {
     // Compute the forces
     const R = this.mesh.computeMaterialForces(this.material);
 
-    // console.log("R norm:", l2Norm(R));
-    // console.log("velocity norm:", l2Norm(this.velocity));
-
     // Compute the update
     const dt2 = this.dt * this.dt;
     const internalExternalForce = R.add(this.externalForces);
-    const velocityTerm = this.velocity.add(this.dt);
+    const velocityTerm = this.velocity.mul(this.dt);
 
     let u = this.mesh.Minv.mul(dt2)
       .mul(internalExternalForce)
       .add(velocityTerm);
 
     // Pin any pinned vertices
-    const pinned = Vector.zero(this.mesh.DOFs());
+    const pinned = Vector.one(this.mesh.DOFs());
     for (let i = 0; i < this.mesh.pinnedVertices.length; i++) {
       const index = this.mesh.pinnedVertices[i];
       if (index) {
         pinned.set([i * 2, i * 2 + 1], [0, 0]);
       }
     }
+    console.log(pinned.toString());
 
     const filter = constructDiagonalSparseMatrix(pinned);
 
@@ -51,6 +49,8 @@ export default class ForwardEulerSpring extends SpringIntegrator {
 
     // Filter out the pinned velocities.
     this.velocity = filter.mul(this.velocity);
+
+    console.log(this.velocity.toString());
 
     const positions = this.mesh.positions();
     u = filter.mul(u);
