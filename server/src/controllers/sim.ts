@@ -39,7 +39,7 @@ export async function runSimulation(req: Request, res: Response) {
 
   for (let idx = 0; idx < 100; idx++) {
     integrator.step();
-    if (idx % 1000 == 0) {
+    if (idx % 10 == 0) {
       v = integrator.mesh.vertices.map((v) => v.values).flat();
       i = integrator.mesh.triangles.map((v) => v.values).flat();
       responsePayload.frames.push({ vertices: v, indices: i });

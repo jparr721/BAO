@@ -35,7 +35,6 @@ const Scene = ({ meshes }: SceneProps) => {
     return (
         <GridContainer layout='column'>
             <GridItem flex={10}>
-                <p>Frame: {frame}</p>
                 <Canvas>
                     <OrthographicCamera position={[0, 0, 5]} />
                     <ambientLight />
