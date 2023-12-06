@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const MenuButton = styled.button`
+const Button = styled.button`
   background-color: transparent;
   color: ${props => props.theme.colors.secondary};
   height: 100%;
@@ -14,4 +14,4 @@ const MenuButton = styled.button`
   }
 `;
 
-export default MenuButton;
+export default Button;

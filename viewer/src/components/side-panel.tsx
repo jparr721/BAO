@@ -1,18 +1,13 @@
 import styled from "styled-components";
 import React from "react";
+import BaseContainer from "./base-contaner";
 
 interface SidePanelProps {
     title?: string;
     children?: React.ReactNode;
 }
 
-const StyledSidePanel = styled.div`
-    background-color: ${props => props.theme.colors.primary};
-    color: ${props => props.theme.colors.secondary};
-    border: 1px solid ${props => props.theme.colors.secondary};
-    border-radius: 10;
-    height: 100%;
-    width: 100%;
+const StyledSidePanel = styled(BaseContainer)`
     text-align: center;
     overflow: auto;
 `;

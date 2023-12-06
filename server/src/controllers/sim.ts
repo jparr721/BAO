@@ -18,10 +18,10 @@ export async function runSimulation(req: Request, res: Response) {
   const pinned = mesh.vertices.map((v) => v.y > 0);
   mesh.pinnedVertices = pinned;
 
-  const material = new MassSpring(1.0, 1);
-  const integrator = new ForwardEulerSpring(mesh, material, 1.0 / 200.0);
+  const material = new MassSpring(100.0, 0.5);
+  const integrator = new ForwardEulerSpring(mesh, material, 1.0 / 15000.0);
 
-  integrator.addGravity(Vector.fromArray([0, -900.8]));
+  integrator.addGravity(Vector.fromArray([0, -9.8]));
 
   mkdirSync("simOutput", { recursive: true });
   integrator.mesh.saveFrameToObj("simOutput/frame_0.obj");
@@ -37,11 +37,13 @@ export async function runSimulation(req: Request, res: Response) {
 
   responsePayload.frames.push({ vertices: v, indices: i });
 
-  for (let idx = 0; idx < 1; idx++) {
+  for (let idx = 0; idx < 100; idx++) {
     integrator.step();
-    v = integrator.mesh.vertices.map((v) => v.values).flat();
-    i = integrator.mesh.triangles.map((v) => v.values).flat();
-    responsePayload.frames.push({ vertices: v, indices: i });
+    if (idx % 1000 == 0) {
+      v = integrator.mesh.vertices.map((v) => v.values).flat();
+      i = integrator.mesh.triangles.map((v) => v.values).flat();
+      responsePayload.frames.push({ vertices: v, indices: i });
+    }
     // integrator.mesh.saveFrameToObj(`simOutput/frame_${idx + 1}.obj`);
   }
 

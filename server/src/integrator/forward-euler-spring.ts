@@ -40,7 +40,6 @@ export default class ForwardEulerSpring extends SpringIntegrator {
         pinned.set([i * 2, i * 2 + 1], [0, 0]);
       }
     }
-    console.log(pinned.toString());
 
     const filter = constructDiagonalSparseMatrix(pinned);
 
@@ -49,8 +48,6 @@ export default class ForwardEulerSpring extends SpringIntegrator {
 
     // Filter out the pinned velocities.
     this.velocity = filter.mul(this.velocity);
-
-    console.log(this.velocity.toString());
 
     const positions = this.mesh.positions();
     u = filter.mul(u);
