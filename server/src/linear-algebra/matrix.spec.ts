@@ -136,5 +136,57 @@ describe("matrix", () => {
           .map((val) => (Object.is(val, -0) ? 0 : val))
       ).toStrictEqual(Matrix.identity(3).values);
     });
+
+    test("norm", () => {
+      const matrix = Matrix.identity(3);
+      const norm = matrix.norm();
+
+      expect(norm).toBeCloseTo(Math.sqrt(3));
+    });
+
+    test("trace - identity", () => {
+      const matrix = Matrix.identity(3);
+      expect(matrix.trace()).toEqual(3);
+    });
+
+    test("trace - non-identity non-square", () => {
+      const matrix = new Matrix(2, 3, [-2, 5, 6, 5, 2, 7]);
+      expect(matrix.trace).toThrow();
+    });
+
+    test("trace - non-identity", () => {
+      const matrix = new Matrix(3, 3, [-2, 5, 6, 5, 2, 7, 9, 1, 1]);
+      expect(matrix.trace()).toEqual(1);
+    });
+
+    test("transpose", () => {
+      const matrix = new Matrix(2, 3, [-2, 5, 6, 5, 2, 7]);
+      const transpose = matrix.transpose();
+
+      expect(transpose.shape).toStrictEqual([3, 2]);
+      expect(transpose.values).toStrictEqual([-2, 5, 5, 2, 6, 7]);
+    });
+
+    test("transpose - square", () => {
+      const matrix = new Matrix(3, 3, [-2, 5, 6, 5, 2, 7, 9, 1, 1]);
+      const transpose = matrix.transpose();
+
+      expect(transpose.shape).toStrictEqual([3, 3]);
+      expect(transpose.values).toStrictEqual([-2, 5, 9, 5, 2, 1, 6, 7, 1]);
+    });
+
+    test("transposeInPlace", () => {
+      const matrix = new Matrix(2, 3, [-2, 5, 6, 5, 2, 7]);
+      matrix.transposeInPlace();
+
+      expect(matrix.shape).toStrictEqual([3, 2]);
+      expect(matrix.values).toStrictEqual([-2, 5, 5, 2, 6, 7]);
+    });
+
+    test("colwiseFlatten", () => {
+      const matrix = new Matrix(3, 3, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      const comp = Vector.fromArray([1, 4, 7, 2, 5, 8, 3, 6, 9]);
+      expect(matrix.colwiseFlatten().values).toStrictEqual(comp.values);
+    });
   });
 });

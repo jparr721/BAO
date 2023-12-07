@@ -1,4 +1,4 @@
-import { TriangleMesh } from "../geometry/triangle-mesh";
+import SpringMesh from "../geometry/spring-mesh";
 import { constructDiagonalSparseMatrix } from "../geometry/triangles";
 import Vector from "../linear-algebra/vector";
 import { LinearMaterial } from "../material/material";
@@ -6,7 +6,7 @@ import SpringIntegrator from "./spring-integrator";
 
 export default class ForwardEulerSpring extends SpringIntegrator {
   constructor(
-    mesh: TriangleMesh,
+    mesh: SpringMesh,
     material: LinearMaterial,
     dt: number = 1.0 / 3000.0,
     rayleighAlpha: number = 0.0,
@@ -17,9 +17,6 @@ export default class ForwardEulerSpring extends SpringIntegrator {
 
   public step(): void {
     // Get new Fs
-    // this.mesh.computeDeformationGradients();
-    this.mesh.staleF = false;
-
     // Compute the forces
     const R = this.mesh.computeMaterialForces(this.material);
 

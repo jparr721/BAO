@@ -1,30 +1,43 @@
 import { Request, Response } from "express";
 import readTriangles2D from "../geometry/read-triangles-2d";
-import { TriangleMesh } from "../geometry/triangle-mesh";
+import SpringMesh from "../geometry/spring-mesh";
 import MassSpring from "../material/mass-spring";
 import ForwardEulerSpring from "../integrator/forward-euler-spring";
-import { mkdirSync } from "fs";
 import { join } from "path";
 import { ok } from "./http-response";
 import Vector from "../linear-algebra/vector";
+import TriangleMesh from "../geometry/triangle-mesh";
+import STVK from "../material/stvk";
+import ForwardEulerArea from "../integrator/forward-euler-area";
 
 export async function runSimulation(req: Request, res: Response) {
   const { vertices, triangles } = readTriangles2D(
     join(import.meta.dir, "..", "..", "/meshes/bunny/bunny.1")
   );
-  const mesh = new TriangleMesh(vertices, triangles, 5 /* uniformMass */);
+  // const mesh = new SpringMesh(vertices, triangles, 1 /* uniformMass */);
 
+  // // Pin the top 5% of vertices
+  // const pinned = mesh.vertices.map((v) => v.y > 0);
+  // mesh.pinnedVertices = pinned;
+
+  // const material = new MassSpring(100.0, 0.5);
+  // const integrator = new ForwardEulerSpring(mesh, material, 1.0 / 15000.0);
+
+  // integrator.addGravity(Vector.fromArray([0, -9.8]));
+
+  const mesh = new TriangleMesh(vertices, triangles, 1 /* uniformMass */);
   // Pin the top 5% of vertices
   const pinned = mesh.vertices.map((v) => v.y > 0);
   mesh.pinnedVertices = pinned;
 
-  const material = new MassSpring(100.0, 0.5);
-  const integrator = new ForwardEulerSpring(mesh, material, 1.0 / 15000.0);
+  const poissionsRatio = 0.1;
+  const youngsModulus = 100.0;
+  const lambda = STVK.computeLambda(youngsModulus, poissionsRatio);
+  const mu = STVK.computeMu(youngsModulus, poissionsRatio);
 
+  const material = new STVK(lambda, mu);
+  const integrator = new ForwardEulerArea(mesh, material, 1.0 / 3000.0);
   integrator.addGravity(Vector.fromArray([0, -9.8]));
-
-  mkdirSync("simOutput", { recursive: true });
-  integrator.mesh.saveFrameToObj("simOutput/frame_0.obj");
 
   const responsePayload: {
     frames: { vertices: number[]; indices: number[] }[];
@@ -35,16 +48,13 @@ export async function runSimulation(req: Request, res: Response) {
   let v = integrator.mesh.vertices.map((v) => v.values).flat();
   let i = integrator.mesh.triangles.map((v) => v.values).flat();
 
-  responsePayload.frames.push({ vertices: v, indices: i });
-
-  for (let idx = 0; idx < 100; idx++) {
+  for (let idx = 0; idx < 1000; idx++) {
     integrator.step();
     if (idx % 10 == 0) {
       v = integrator.mesh.vertices.map((v) => v.values).flat();
       i = integrator.mesh.triangles.map((v) => v.values).flat();
       responsePayload.frames.push({ vertices: v, indices: i });
     }
-    // integrator.mesh.saveFrameToObj(`simOutput/frame_${idx + 1}.obj`);
   }
 
   ok(res, responsePayload);

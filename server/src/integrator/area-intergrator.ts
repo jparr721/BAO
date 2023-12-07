@@ -1,13 +1,13 @@
-import SpringMesh from "../geometry/spring-mesh";
+import TriangleMesh from "../geometry/triangle-mesh";
 import Vector from "../linear-algebra/vector";
-import { LinearMaterial } from "../material/material";
+import { NonLinearMaterial } from "../material/material";
 
-export default abstract class SpringIntegrator {
+export default abstract class AreaIntegrator {
   public dt: number;
 
-  public mesh: SpringMesh;
+  public mesh: TriangleMesh;
 
-  public material: LinearMaterial;
+  public material: NonLinearMaterial;
 
   public externalForces: Vector;
 
@@ -18,11 +18,11 @@ export default abstract class SpringIntegrator {
   protected rayleighBeta: number = 0.0;
 
   constructor(
-    mesh: SpringMesh,
-    material: LinearMaterial,
+    mesh: TriangleMesh,
+    material: NonLinearMaterial,
     dt: number,
-    rayleighAlpha: number,
-    rayleighBeta: number
+    rayleighAlpha: number = 0,
+    rayleighBeta: number = 0
   ) {
     this.dt = dt;
     this.mesh = mesh;

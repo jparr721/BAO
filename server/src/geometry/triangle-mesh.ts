@@ -1,11 +1,10 @@
-import { triangleArea } from "./triangles";
-import { LinearMaterial, NonLinearMaterial } from "../material/material";
+import { evaluateFPartialDerivative, triangleArea } from "./triangles";
+import { NonLinearMaterial } from "../material/material";
 import fs from "fs";
 import Vector from "../linear-algebra/vector";
 import Matrix from "../linear-algebra/matrix";
-import { isEqual } from "lodash";
 
-export class TriangleMesh {
+export default class TriangleMesh {
   // The simulation vertices (mutates)
   public vertices: Vector[];
 
@@ -80,7 +79,7 @@ export class TriangleMesh {
     this.surfaceVertices = [];
 
     // Compute the mass matrix
-    this.M = Matrix.identity(this.vertices.length * 2).mul(uniformMass);
+    this.M = Matrix.identity(this.DOFs()).mul(uniformMass);
     this.Minv = this.M.inv();
 
     // Precompute the DmInverse values
@@ -96,7 +95,11 @@ export class TriangleMesh {
       this.DmInverses[i] = Dm.inv();
     }
 
-    // this.computeAreas();
+    for (let i = 0; i < this.triangles.length; i++) {
+      this.pFpxs[i] = evaluateFPartialDerivative(this.DmInverses[i]);
+    }
+
+    this.computeAreas();
   }
 
   private computeAreas() {
@@ -129,83 +132,59 @@ export class TriangleMesh {
     }
   }
 
-  private computeLinearMaterialForces(material: LinearMaterial) {
-    const perElementForces = [...new Array(this.edges.length)].map((_, i) => {
-      const edgeIndex = this.edges[i];
-      const v1 = this.vertices[edgeIndex[0]];
-      const v2 = this.vertices[edgeIndex[1]];
-      const length = v2.sub(v1).norm();
+  public computeMaterialForces(material: NonLinearMaterial): Vector {
+    const perElementForces = [...new Array(this.triangles.length)].map(
+      (_, t) => {
+        const F = this.Fs[t];
+        const PK1 = material.PK1(F);
+        const forceDensity = this.pFpxs[t]
+          .transpose()
+          .mul(PK1.colwiseFlatten());
 
-      // Stack the vertices into a 4x1 matrix
-      const x = Vector.zero(4);
-      x.set([0, 1], v1.values);
-      x.set([2, 3], v2.values);
+        return forceDensity.mul(-this.restAreas[t]);
+      }
+    );
 
-      const pk1 = material.PK1(x);
-      return pk1.mul(-length);
-    });
+    const forces = Vector.zero(this.DOFs());
 
-    // Convert per-element forces into one large vector
-    const R = Vector.zero(this.DOFs());
-    for (let i = 0; i < this.edges.length; i++) {
-      const force = perElementForces[i];
+    for (let i = 0; i < this.triangles.length; i++) {
+      const t = this.triangles[i];
+      const triangleForce = perElementForces[i];
 
-      for (let j = 0; j < 2; j++) {
-        const index = this.edges[i][j];
-        R.set([index * 2, index * 2 + 1], force.get([j * 2, j * 2 + 1]));
+      for (let x = 0; x < 2; x++) {
+        const index = t.get(x);
+        forces.set(
+          [index * 2, index * 2 + 1],
+          triangleForce.get([x * 2, x * 2 + 1])
+        );
       }
     }
 
-    return R;
-  }
-
-  private computeNonLinearMaterialForces(material: NonLinearMaterial): Vector {
-    throw new Error("Not supported");
-  }
-
-  public computeMaterialForces(
-    material: LinearMaterial | NonLinearMaterial
-  ): Vector {
-    if (this.staleF) {
-      throw new Error("Cannot compute material forces without updated F");
-    }
-
-    if (material instanceof LinearMaterial) {
-      return this.computeLinearMaterialForces(material);
-    } else {
-      return this.computeNonLinearMaterialForces(material);
-    }
+    return forces;
   }
 
   /**
    * Computes the deformation gradient for each triangle.
    */
   public computeDeformationGradients() {
-    // // Formula from Dynamic Deformables, appendix D.1
-    // for (let i = 0; i < this.triangles.length; i++) {
-    //   const triangle = this.triangles[i];
-    //   // The 'D' terms represent displacement in material versus spatial coordinates.
-    //   // Here, the D matrices multiply to form the invariant deformation gradient.
-    //   const Ds = math.matrix(math.zeros([2, 2]));
-    //   setMatrixColumn(
-    //     Ds,
-    //     math.subtract(
-    //       this.vertices[triangle.get([1])],
-    //       this.vertices[triangle.get([0])]
-    //     ),
-    //     0
-    //   );
-    //   setMatrixColumn(
-    //     Ds,
-    //     math.subtract(
-    //       this.vertices[triangle.get([2])],
-    //       this.vertices[triangle.get([0])]
-    //     ),
-    //     1
-    //   );
-    //   this.Fs[i] = math.multiply(Ds, this.DmInverses[i]);
-    // }
-    // this.staleF = false;
+    // Formula from Dynamic Deformables, appendix D.1
+    for (let i = 0; i < this.triangles.length; i++) {
+      const triangle = this.triangles[i];
+      // The 'D' terms represent displacement in material versus spatial coordinates.
+      // Here, the D matrices multiply to form the invariant deformation gradient.
+      const Ds = Matrix.zero(2, 2);
+      Ds.setCol(
+        0,
+        this.vertices[triangle.get(1)].sub(this.vertices[triangle.get(0)])
+      );
+      Ds.setCol(
+        1,
+        this.vertices[triangle.get(2)].sub(this.vertices[triangle.get(0)])
+      );
+      this.Fs[i] = Ds.mul(this.DmInverses[i]);
+    }
+
+    this.staleF = false;
   }
 
   public DOFs(): number {
@@ -218,7 +197,7 @@ export class TriangleMesh {
   public positions(): Vector {
     const positions = Vector.zero(this.DOFs());
     for (let i = 0; i < this.vertices.length; i++) {
-      positions.set([i * 2, i * 2 + 1], this.vertices[i].values);
+      positions.set([i * 2, i * 2 + 1], this.vertices[i]);
     }
     return positions;
   }

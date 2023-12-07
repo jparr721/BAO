@@ -4,6 +4,13 @@ import Vector from "../linear-algebra/vector";
 export function triangleArea(t0: Vector, t1: Vector, t2: Vector): number {
   const a = t1.sub(t0);
   const b = t2.sub(t0);
+
+  if (a.length == 2) {
+    const a3 = Vector.fromArray([...a.values, 0]);
+    const b3 = Vector.fromArray([...b.values, 0]);
+    return 0.5 * a3.cross(b3).norm();
+  }
+
   const c = a.cross(b).norm();
   return 0.5 * c;
 }
@@ -53,15 +60,15 @@ export function evaluateFPartialDerivativeColumn(
 export function evaluateFPartialDerivative(DmInv: Matrix): Matrix {
   const result = Matrix.zero(4, 6);
 
-  // for (let i = 0; i < 6; i++) {
-  //   // Set the column to the flattened derivative
-  //   const derivative = flatten(evaluateFPartialDerivativeColumn(i, DmInv));
+  for (let i = 0; i < 6; i++) {
+    // Set the column to the flattened derivative
+    const derivative = evaluateFPartialDerivativeColumn(
+      i,
+      DmInv
+    ).colwiseFlatten();
 
-  //   // Now, set the column of the result
-  //   for (let j = 0; j < 4; j++) {
-  //     result.set([j, i], derivative.get([j]));
-  //   }
-  // }
+    result.setCol(i, derivative);
+  }
 
   return result;
 }

@@ -5,11 +5,9 @@ import Button from './components/button';
 import Menu from './components/menu';
 import SidePanel from './components/side-panel';
 import ListView from './components/list-view';
-import ListItem from './components/list-item';
 import DetailItem from './components/detail-item';
 import { useQuery } from '@tanstack/react-query';
 import { runSimulation } from './net/sim';
-import { useState } from 'react';
 import Scene from './components/scene/scene';
 import { FrameProvider } from './components/scene/frame-context';
 
@@ -17,14 +15,6 @@ export default function App() {
   const query = useQuery({
     queryKey: ['runSimBunny'], queryFn: runSimulation,
   });
-
-  const [currentMesh, setCurrentMesh] = useState({ v: [], f: [] });
-
-  const setMesh = (e) => {
-    console.log('loading frame', e.target.value);
-    console.log(query.data?.data?.frames[e.target.value]);
-    setCurrentMesh(query.data?.data?.frames[e.target.value]);
-  };
 
 
   return (

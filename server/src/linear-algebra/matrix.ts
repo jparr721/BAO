@@ -215,6 +215,64 @@ export default class Matrix {
     return inverse;
   }
 
+  public norm(): number {
+    return Math.sqrt(this.squaredNorm());
+  }
+
+  public squaredNorm(): number {
+    return this._values.reduce((acc, value) => acc + value ** 2, 0);
+  }
+
+  public trace(): number {
+    if (this.rows !== this.cols) {
+      throw new Error(`Cannot take trace of non-square matrix ${this.shape}`);
+    }
+
+    return this._values.reduce((acc, value, i) => {
+      if (i % (this.rows + 1) === 0) {
+        return acc + value;
+      } else {
+        return acc;
+      }
+    }, 0);
+  }
+
+  public transpose(): Matrix {
+    const values = new Array(this.rows * this.cols).fill(0);
+    for (let col = 0; col < this.cols; col++) {
+      for (let row = 0; row < this.rows; row++) {
+        values[col * this.rows + row] = this.get(row, col);
+      }
+    }
+
+    return new Matrix(this.cols, this.rows, values);
+  }
+
+  public transposeInPlace(): void {
+    const values = new Array(this.rows * this.cols).fill(0);
+    for (let col = 0; col < this.cols; col++) {
+      for (let row = 0; row < this.rows; row++) {
+        values[col * this.rows + row] = this.get(row, col);
+      }
+    }
+
+    this._values = values;
+    const temp = this.rows;
+    this.rows = this.cols;
+    this.cols = temp;
+  }
+
+  public colwiseFlatten(): Vector {
+    const values = new Array(this.rows * this.cols).fill(0);
+    for (let col = 0; col < this.cols; col++) {
+      for (let row = 0; row < this.rows; row++) {
+        values[col * this.rows + row] = this.get(row, col);
+      }
+    }
+
+    return new Vector(...values);
+  }
+
   public clone(): Matrix {
     return new Matrix(this.rows, this.cols, Array.from(this._values));
   }
