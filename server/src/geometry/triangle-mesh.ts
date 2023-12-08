@@ -35,17 +35,17 @@ export default class TriangleMesh {
   // The inverse mass matrix
   public Minv: Matrix;
 
+  // The rest configuration area
+  public restAreas: number[];
+
+  // The one-ring areas around each vertex
+  public oneRingAreas: number[];
+
   // The per-element Dm inverses (for computing deformation gradients)
   private DmInverses: Matrix[];
 
   // The partial derivative of F with respect to x.
   private pFpxs: Matrix[];
-
-  // The rest configuration area
-  private restAreas: number[];
-
-  // The one-ring areas around each vertex
-  private oneRingAreas: number[];
 
   // The epislon collision envelope (minimum distance between points before initiating collision)
   private collisionEps: number;
@@ -149,14 +149,13 @@ export default class TriangleMesh {
 
     for (let i = 0; i < this.triangles.length; i++) {
       const t = this.triangles[i];
-      const triangleForce = perElementForces[i];
+      const triForce = perElementForces[i];
 
-      for (let x = 0; x < 2; x++) {
-        const index = t.get(x);
-        forces.set(
-          [index * 2, index * 2 + 1],
-          triangleForce.get([x * 2, x * 2 + 1])
-        );
+      for (let x = 0; x < 3; x++) {
+        const index = 2 * t.get(x);
+
+        forces.set(index, forces.get(index) + triForce.get(2 * x));
+        forces.set(index + 1, forces.get(index + 1) + triForce.get(2 * x + 1));
       }
     }
 

@@ -55,7 +55,10 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
                     </GridContainer>
                 </GridItem>
                 <GridItem flex={4}>
-                    <FrameSlider value={frame} max={frames} />
+                    <FrameSlider value={frame} max={frames - 1} onChange={(e) => setFrame(e.target.value)} />
+                </GridItem>
+                <GridItem>
+                    <p>Frame {frame}</p>
                 </GridItem>
             </GridContainer>
         </BaseContainer>

@@ -36,9 +36,11 @@ export default abstract class AreaIntegrator {
   abstract step(): void;
 
   public addGravity(gravity: Vector): void {
-    this.externalForces = Vector.zero(this.mesh.DOFs());
     for (let i = 0; i < this.mesh.vertices.length; i++) {
-      this.externalForces.set([i * 2, i * 2 + 1], gravity);
+      this.externalForces.set(
+        [i * 2, i * 2 + 1],
+        gravity.mul(this.mesh.oneRingAreas[i])
+      );
     }
   }
 }

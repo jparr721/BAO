@@ -273,6 +273,22 @@ export default class Matrix {
     return new Vector(...values);
   }
 
+  public determinant(): number {
+    if (this.rows !== this.cols) {
+      throw new Error(
+        `Cannot take determinant of non-square matrix ${this.shape}`
+      );
+    }
+
+    if (this.rows === 2) {
+      return this.get(0, 0) * this.get(1, 1) - this.get(0, 1) * this.get(1, 0);
+    }
+
+    throw new Error("Dimension not supported");
+
+    // return determinant;
+  }
+
   public clone(): Matrix {
     return new Matrix(this.rows, this.cols, Array.from(this._values));
   }

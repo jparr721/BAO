@@ -32,7 +32,7 @@ function customLogFormat(tokens: any, req: Request, res: Response) {
     response_status: tokens.status(req, res),
     request_bytes_sent: tokens.res(req, res, "content-length"),
     http_referrer: tokens.referrer(req, res),
-    request_user_agent: tokens["response-time"](req, res),
+    request_user_agent: tokens["user-agent"](req, res),
     response_time: tokens["response-time"](req, res),
     request_id: req.headers["x-request-id"],
     server_name: req.headers.host,

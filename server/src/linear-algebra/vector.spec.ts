@@ -84,6 +84,15 @@ describe("Vector", () => {
       v1.set([3, 4], [13, 14]);
       expect(v1.values).toEqual([10, 11, 12, 13, 14]);
     });
+
+    test("set multiple indices with vector", () => {
+      const v1 = new Vector(1, 2, 3, 4, 5);
+      const v2 = new Vector(10, 11, 12);
+      const v3 = new Vector(13, 14);
+      v1.set([0, 1, 2], v2);
+      v1.set([3, 4], v3);
+      expect(v1.values).toEqual([10, 11, 12, 13, 14]);
+    });
   });
 
   describe("get", () => {

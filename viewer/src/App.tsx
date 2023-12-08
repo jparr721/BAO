@@ -49,7 +49,7 @@ export default function App() {
               <GridItem flex={1}>
                 <SidePanel title={query.isLoading ? "Loading" : "Frames"}>
                   {
-                    !query.isLoading && <p>Frame {query.data.data.frames.length}</p>
+                    !query.isLoading && <p>Total Frames {query.data.data.frames.length}</p>
                   }
                 </SidePanel>
               </GridItem>
