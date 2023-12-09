@@ -7,6 +7,8 @@ import FrameSlider from './frame-slider';
 import Button from '../button';
 import { useFrame } from '../scene/frame-context';
 
+const ONE_SECOND_MS = 1000;
+
 
 interface SceneControlsProps {
     // The number of simulation frames being controlled.
@@ -16,6 +18,21 @@ interface SceneControlsProps {
 const SceneControls = ({ frames }: SceneControlsProps) => {
     const { frame, setFrame } = useFrame();
     const [isPlaying, setIsPlaying] = useState(false);
+    const [fps, setFps] = useState(24);
+
+    const setFpsFromString = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const fps = event.target.value;
+
+        try {
+            setFps(parseInt(fps));
+        } catch (e) {
+            console.error(`Caught error updating fps to ${fps}: ${e}`);
+
+            // Default to this value
+            setFps(24);
+        }
+
+    };
 
     useEffect(() => {
         let interval: number | undefined;
@@ -23,7 +40,7 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
         if (isPlaying && frame < frames) {
             interval = setInterval(() => {
                 setFrame((frame) => (frame + 1) % frames);
-            }, 8);
+            }, ONE_SECOND_MS / fps);
         }
 
         return () => {
@@ -38,7 +55,7 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
                 <GridItem>
                     <GridContainer layout="column">
                         <GridItem>
-                            <Select>
+                            <Select onChange={setFpsFromString} value={fps}>
                                 <option value="24">24</option>
                                 <option value="30">30</option>
                                 <option value="60">60</option>
@@ -55,7 +72,7 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
                     </GridContainer>
                 </GridItem>
                 <GridItem flex={4}>
-                    <FrameSlider value={frame} max={frames - 1} onChange={(e) => setFrame(e.target.value)} />
+                    <FrameSlider value={frame} max={frames - 1} onChange={(e) => setFrame(parseInt(e.target.value))} />
                 </GridItem>
                 <GridItem>
                     <p>Frame {frame}</p>

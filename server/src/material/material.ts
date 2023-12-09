@@ -112,14 +112,6 @@ export abstract class NonLinearMaterial {
    */
   abstract hessian(F: Matrix): Matrix;
 
-  static computeMu(E: number, nu: number): number {
-    return E / (2.0 * (1.0 + nu));
-  }
-
-  static computeLambda(E: number, nu: number): number {
-    return (E * nu) / ((1.0 + nu) * (1.0 - 2.0 * nu));
-  }
-
   public finiteDifferenceTestPK1(F: Matrix): boolean {
     const psi0 = this.psi(F);
     const PK10 = this.PK1(F);
@@ -169,4 +161,12 @@ export abstract class NonLinearMaterial {
       return false;
     }
   }
+}
+
+export function computeMu(E: number, nu: number): number {
+  return E / (2.0 * (1.0 + nu));
+}
+
+export function computeLambda(E: number, nu: number): number {
+  return (E * nu) / ((1.0 + nu) * (1.0 - 2.0 * nu));
 }

@@ -1,15 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
-// Define a type for Express route handlers
-type ExpressRouteHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<any> | void;
+import ExpressFn from "./express-fn";
 
 // Use the ExpressRouteHandler type for the 'fn' parameter
 const unrollError =
-  (fn: ExpressRouteHandler): ExpressRouteHandler =>
+  (fn: ExpressFn): ExpressFn =>
   (req: Request, res: Response, next: NextFunction): Promise<any> =>
     Promise.resolve(fn(req, res, next)).catch((err) => next(err));
 

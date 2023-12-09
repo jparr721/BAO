@@ -15,6 +15,7 @@ const customErrorHandler = (
   const message = err.message || "Internal Server Error";
 
   const debugPayload = {
+    err,
     method: req.method,
     path: req.path,
     query: req.query,

@@ -17,9 +17,7 @@ import compression from "compression";
 
 // side-effect for dotenv
 import "./dotenv";
-
-// validation
-import { errors } from "celebrate";
+import validatePayload from "./middleware/validate-payload";
 
 function customLogFormat(tokens: any, req: Request, res: Response) {
   return JSON.stringify({
@@ -60,7 +58,6 @@ export default function initializeApp(): Express {
     () => cookieParser(),
     () => cors(),
     () => helmet(),
-    () => errors(),
   ].forEach((m) => app.use(m()));
 
   return app;
