@@ -8,22 +8,11 @@ import STVK from "../../material/stvk";
 import ForwardEulerArea from "../../integrator/forward-euler-area";
 import SNH from "../../material/snh";
 import { computeLambda, computeMu } from "../../material/material";
-import { useSimCache } from "../../simulation/sim-cache";
-import CreateSimulation from "./create-simulation.type";
-import { validateOrReject } from "class-validator";
-import logger from "../../logger";
 import MutationRequest from "../mutation-request";
-
-export async function createSimulation(
-  req: MutationRequest<CreateSimulation>,
-  res: Response
-) {
-  ok(res, req.body);
-}
 
 export async function runSimulation(req: Request, res: Response) {
   const { vertices, triangles } = readTriangles2D(
-    join(import.meta.dir, "..", "..", "/meshes/bunny/bunny.1")
+    join(import.meta.dir, "..", "..", "..", "/meshes/bunny/bunny.1")
   );
 
   const mesh = new TriangleMesh(vertices, triangles, 5 /* uniformMass */);
@@ -48,7 +37,7 @@ export async function runSimulation(req: Request, res: Response) {
   let v = integrator.mesh.vertices.map((v) => v.values).flat();
   let i = integrator.mesh.triangles.map((v) => v.values).flat();
 
-  for (let idx = 0; idx < 10000; idx++) {
+  for (let idx = 0; idx < 1000; idx++) {
     integrator.step();
     if (idx % 50 == 0) {
       v = integrator.mesh.vertices.map((v) => v.values).flat();

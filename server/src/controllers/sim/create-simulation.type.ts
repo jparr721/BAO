@@ -11,4 +11,14 @@ export default class CreateSimulation {
   @IsString()
   @IsNotEmpty()
   public mesh!: string;
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  public material!: "snh" | "stvk";
+
+  @Expose()
+  @IsString()
+  @IsNotEmpty()
+  public integrator!: "forward-euler-area";
 }

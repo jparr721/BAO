@@ -1,8 +1,6 @@
 import './App.css';
 import GridContainer from './components/grid-container';
 import GridItem from './components/grid-item';
-import Button from './components/button';
-import Menu from './components/menu';
 import SidePanel from './components/side-panel';
 import ListView from './components/list-view';
 import DetailItem from './components/detail-item';
@@ -10,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { runSimulation } from './net/sim';
 import Scene from './components/scene/scene';
 import { FrameProvider } from './components/scene/frame-context';
+import Toolbar from './components/toolbar/toolbar';
 
 export default function App() {
   const query = useQuery({
@@ -22,14 +21,7 @@ export default function App() {
       <div className='fullscreen'>
         <GridContainer layout="column">
           <GridItem flex={1}>
-            <Menu>
-              <GridContainer layout='row'>
-                <GridItem>
-                  <Button>File</Button>
-                  <Button>Other</Button>
-                </GridItem>
-              </GridContainer>
-            </Menu>
+            <Toolbar />
           </GridItem>
           <GridItem flex={15}>
             <GridContainer layout="row">

@@ -9,7 +9,6 @@ interface SidePanelProps {
 
 const StyledSidePanel = styled(BaseContainer)`
     text-align: center;
-    overflow: auto;
 `;
 
 const SidePanel = ({ title, children }: SidePanelProps) => (

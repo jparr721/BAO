@@ -1,6 +1,6 @@
 # BAO
 
-![BAO Logo](https://github.com/jparr721/BAO/blob/main/viewer/public/logo.png)
+![BAO Logo](https://github.com/jparr721/BAO/blob/main/viewer/assets/Logo_Small.png)
 
 ### Running
 Server:

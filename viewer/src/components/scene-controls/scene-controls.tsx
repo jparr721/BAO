@@ -46,14 +46,14 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [isPlaying, frame, frames, setFrame]);
+    }, [isPlaying, frame, frames, setFrame, fps]);
 
 
     return (
         <BaseContainer>
             <GridContainer layout="row">
-                <GridItem>
-                    <GridContainer layout="column">
+                <GridItem flex={"0 0 auto"}>
+                    <GridContainer layout='row'>
                         <GridItem>
                             <Select onChange={setFpsFromString} value={fps}>
                                 <option value="24">24</option>
@@ -65,13 +65,15 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
                             <Button onClick={() => setIsPlaying(!isPlaying)}>
                                 {isPlaying ? 'Pause' : 'Play'}
                             </Button>
+                        </GridItem>
+                        <GridItem>
                             <Button onClick={() => setFrame(0)}>
                                 Reset
                             </Button>
                         </GridItem>
                     </GridContainer>
                 </GridItem>
-                <GridItem flex={4}>
+                <GridItem flex={2}>
                     <FrameSlider value={frame} max={frames - 1} onChange={(e) => setFrame(parseInt(e.target.value))} />
                 </GridItem>
                 <GridItem>
