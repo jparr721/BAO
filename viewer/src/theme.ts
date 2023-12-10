@@ -1,7 +1,16 @@
 const theme = {
   colors: {
-    primary: "#f5f6fa",
-    secondary: "#353b48",
+    primary: "#2c2c2c",
+    secondary: "#f1f1f1",
+    border: "#444444",
+
+    canvas: {
+      background: "#1e1e1e",
+    },
+
+    text: {
+      primary: "#ffffff",
+    },
   },
 };
 

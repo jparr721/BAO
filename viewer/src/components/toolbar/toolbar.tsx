@@ -7,16 +7,24 @@ import GridItem from "../grid-item";
 const Toolbar = () => (
     <BaseContainer>
         <GridContainer>
-            <GridItem flex={"0 0 auto"}>
-                <Button>
-                    <img src={IMAGES.LogoTiny} />
-                </Button>
+            <GridItem justifyContent="flex-start">
+                <GridItem flex={"0 0 auto"}>
+                    <Button>
+                        <img src={IMAGES.LogoTiny} />
+                    </Button>
+                </GridItem>
+                <GridItem flex={"0 0 auto"}>
+                    <Button>File</Button>
+                </GridItem>
+                <GridItem flex={"0 0 auto"}>
+                    <Button>Other</Button>
+                </GridItem>
             </GridItem>
-            <GridItem flex={"0 0 auto"}>
-                <Button>File</Button>
+            <GridItem>
+                <p>Project Name</p>
             </GridItem>
-            <GridItem flex={"0 0 auto"}>
-                <Button>Other</Button>
+            <GridItem justifyContent="flex-end">
+                <Button>Export</Button>
             </GridItem>
         </GridContainer>
     </BaseContainer>

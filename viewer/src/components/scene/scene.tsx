@@ -5,6 +5,7 @@ import GridContainer from '../grid-container';
 import GridItem from '../grid-item';
 import SceneControlsContainer from '../scene-controls/scene-controls-container';
 import { useFrame } from './frame-context';
+import theme from '../../theme';
 
 interface SceneMesh {
     vertices: number[],
@@ -33,9 +34,9 @@ const Scene = ({ meshes }: SceneProps) => {
     const mesh = meshes !== undefined ? meshes[frame] : { vertices: [], indices: [] };
 
     return (
-        <GridContainer layout='column'>
+        <GridContainer layout='column' style={{ background: theme.colors.canvas.background }}>
             <GridItem flex={10}>
-                <Canvas>
+                <Canvas style={{ background: theme.colors.canvas.background }}>
                     <OrthographicCamera position={[0, 0, 5]} />
                     <ambientLight />
                     <pointLight position={[10, 10, 10]} />

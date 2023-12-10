@@ -51,27 +51,36 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
 
     return (
         <BaseContainer>
-            <GridContainer layout="row">
-                <GridItem flex={"0 0 auto"}>
-                    <GridContainer layout='row'>
-                        <GridItem>
-                            <Select onChange={setFpsFromString} value={fps}>
-                                <option value="24">24</option>
-                                <option value="30">30</option>
-                                <option value="60">60</option>
-                            </Select>
-                        </GridItem>
-                        <GridItem>
-                            <Button onClick={() => setIsPlaying(!isPlaying)}>
-                                {isPlaying ? 'Pause' : 'Play'}
-                            </Button>
-                        </GridItem>
-                        <GridItem>
-                            <Button onClick={() => setFrame(0)}>
-                                Reset
-                            </Button>
-                        </GridItem>
-                    </GridContainer>
+            <GridContainer>
+                <GridItem>
+                    <GridItem flex={"0 0 auto"}>
+                        <GridContainer layout='row'>
+                            <GridItem>
+                                <GridContainer>
+                                    <GridItem justifyContent="flex-start">
+                                        <p>FPS</p>
+                                    </GridItem>
+                                    <GridItem>
+                                        <Select onChange={setFpsFromString} value={fps}>
+                                            <option value="24">24</option>
+                                            <option value="30">30</option>
+                                            <option value="60">60</option>
+                                        </Select>
+                                    </GridItem>
+                                </GridContainer>
+                            </GridItem>
+                            <GridItem>
+                                <Button onClick={() => setIsPlaying(!isPlaying)}>
+                                    {isPlaying ? 'Pause' : 'Play'}
+                                </Button>
+                            </GridItem>
+                            <GridItem>
+                                <Button onClick={() => setFrame(0)}>
+                                    Reset
+                                </Button>
+                            </GridItem>
+                        </GridContainer>
+                    </GridItem>
                 </GridItem>
                 <GridItem flex={2}>
                     <FrameSlider value={frame} max={frames - 1} onChange={(e) => setFrame(parseInt(e.target.value))} />
