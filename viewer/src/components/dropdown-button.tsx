@@ -36,11 +36,16 @@ interface DropdownButtonProps {
 const DropdownButton = ({ items, onSelectItem, children }: DropdownButtonProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const buttonRef = useRef(null);
+    const dropdownRef = useRef(null);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
     const toggleDropdown = () => {
         if (buttonRef.current) {
+            // Get the button position
             const buttonRect = buttonRef.current.getBoundingClientRect();
+
+            // ... and then set the menu position to the bottom of the button.
+            // Is this somewhat goofy? Yeah, but it works quite well honestly.
             setMenuPosition({
                 top: buttonRect.bottom + window.scrollY,
                 left: buttonRect.left + window.scrollX
@@ -49,17 +54,22 @@ const DropdownButton = ({ items, onSelectItem, children }: DropdownButtonProps) 
         setIsOpen(!isOpen);
     };
 
+    const handleItemSelect = (item: DropdownItem) => {
+        onSelectItem(item);
+        setIsOpen(false);
+    };
+
     // If the user clicks outside of the dropdown, close it
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
-            if (buttonRef.current && !buttonRef.current.contains(event.target)) {
+            if (buttonRef.current && !buttonRef.current.contains(event.target) && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);
             }
 
         };
         document.addEventListener('mousedown', handleOutsideClick);
         return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, [buttonRef]);
+    }, [buttonRef, dropdownRef]);
 
     return (
         <>
@@ -68,13 +78,11 @@ const DropdownButton = ({ items, onSelectItem, children }: DropdownButtonProps) 
             </Button>
             {
                 isOpen &&
-                <DropdownMenu style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px` }}>
+                <DropdownMenu style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px` }} ref={dropdownRef}>
                     {items.map((item, index) => (
-                        <>
-                            <DropdownItem key={index} onClick={() => handleSelect(item)}>
-                                {item.label}
-                            </DropdownItem>
-                        </>
+                        <DropdownItem key={index} onClick={() => handleItemSelect(item)}>
+                            {item.label}
+                        </DropdownItem>
                     ))}
                 </DropdownMenu>
             }

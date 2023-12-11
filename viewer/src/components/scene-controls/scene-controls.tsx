@@ -57,7 +57,7 @@ const SceneControls = ({ frames }: SceneControlsProps) => {
                         <GridContainer layout='row'>
                             <GridItem>
                                 <GridContainer>
-                                    <GridItem justifyContent="flex-start">
+                                    <GridItem justifycontent="flex-start">
                                         <p>FPS</p>
                                     </GridItem>
                                     <GridItem>

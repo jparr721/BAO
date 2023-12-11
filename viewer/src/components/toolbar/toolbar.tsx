@@ -9,12 +9,13 @@ import DropdownButton from "../dropdown-button";
 
 const Toolbar = () => {
     const handleSelect = (item) => {
+        console.log("CALLED");
         console.log('Selected item:', item.label);
     };
     return (
         <BaseContainer>
             <GridContainer>
-                <GridItem justifyContent="flex-start">
+                <GridItem justifycontent="flex-start">
                     <Button>
                         <img src={IMAGES.LogoTiny} />
                     </Button>
@@ -33,7 +34,7 @@ const Toolbar = () => {
                 <GridItem>
                     <p>Project Name</p>
                 </GridItem>
-                <GridItem justifyContent="flex-end">
+                <GridItem justifycontent="flex-end">
                     <Button>Export</Button>
                 </GridItem>
             </GridContainer>
