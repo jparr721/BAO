@@ -43,4 +43,10 @@ export default abstract class AreaIntegrator {
       );
     }
   }
+
+  public toString(): string {
+    return `AreaIntegrator(dt: ${
+      this.dt
+    }, mesh: ${this.mesh.toString()}, material: ${this.material.toString()})`;
+  }
 }

@@ -11,8 +11,8 @@ import { computeLambda, computeMu } from "../../material/material";
 import MutationRequest from "../mutation-request";
 
 export async function runSimulation(req: Request, res: Response) {
-  const { vertices, triangles } = readTriangles2D(
-    join(import.meta.dir, "..", "..", "..", "/meshes/bunny/bunny.1")
+  const { vertices, indices: triangles } = readTriangles2D(
+    join(import.meta.dir, "..", "..", "..", "/meshes/bunny/bunny")
   );
 
   const mesh = new TriangleMesh(vertices, triangles, 5 /* uniformMass */);

@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from "fs";
 import Vector from "../linear-algebra/vector";
+import TriangleMeshRaw from "./triangle-mesh-raw.type";
 
 function readNodeFile(filename: string): Vector[] {
   // Open filename and read it line by line
@@ -54,10 +55,7 @@ function readEleFile(filename: string): Vector[] {
     .filter((x) => x !== undefined) as Vector[];
 }
 
-export default function readTriangles2D(prefix: string): {
-  vertices: Vector[];
-  triangles: Vector[];
-} {
+export default function readTriangles2D(prefix: string): TriangleMeshRaw {
   // Loads a volumetric triangle mesh from node/ele format (i.e. del triangualtion).
   const nodeFile = prefix + ".node";
   const elementFile = prefix + ".ele";
@@ -73,6 +71,6 @@ export default function readTriangles2D(prefix: string): {
 
   return {
     vertices: readNodeFile(nodeFile),
-    triangles: readEleFile(elementFile),
+    indices: readEleFile(elementFile),
   };
 }

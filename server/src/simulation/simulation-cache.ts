@@ -9,6 +9,16 @@ export class SimCache {
     this.cache = {};
   }
 
+  public toString(): string {
+    let cacheString = "SimCache(";
+
+    for (const key in this.cache) {
+      cacheString += `${key}: ${this.cache[key].toString()}, `;
+    }
+
+    return cacheString;
+  }
+
   public static instance(): SimCache {
     if (!SimCache._instance) {
       SimCache._instance = new SimCache();
@@ -17,7 +27,14 @@ export class SimCache {
   }
 
   public addSimulation(key: string, sim: Simulation) {
+    if (this.exists(key)) {
+      throw new Error(`Simulation with key '${key}' already exists.`);
+    }
     this.cache[key] = sim;
+  }
+
+  public exists(key: string): boolean {
+    return !!this.cache[key];
   }
 }
 

@@ -11,7 +11,8 @@ export default (): Router => {
   router.post("/", unrollError(runSimulation));
   router.post(
     "/create",
-    validatePayload(CreateSimulation, unrollError(createSimulation))
+    validatePayload(CreateSimulation),
+    unrollError(createSimulation)
   );
   return router;
 };

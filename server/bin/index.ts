@@ -11,6 +11,7 @@ const customErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(JSON.stringify(err, null, 2));
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
 

@@ -161,12 +161,25 @@ export abstract class NonLinearMaterial {
       return false;
     }
   }
+
+  public toString(): string {
+    return `NonLinearMaterial(${this.name})`;
+  }
 }
 
-export function computeMu(E: number, nu: number): number {
-  return E / (2.0 * (1.0 + nu));
+export function computeMu(
+  youngsModulus: number,
+  poissonsRatio: number
+): number {
+  return youngsModulus / (2.0 * (1.0 + poissonsRatio));
 }
 
-export function computeLambda(E: number, nu: number): number {
-  return (E * nu) / ((1.0 + nu) * (1.0 - 2.0 * nu));
+export function computeLambda(
+  youngsModulus: number,
+  poissonsRatio: number
+): number {
+  return (
+    (youngsModulus * poissonsRatio) /
+    ((1.0 + poissonsRatio) * (1.0 - 2.0 * poissonsRatio))
+  );
 }

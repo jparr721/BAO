@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
-const Button = styled.button`
+interface ButtonProps {
+  selected?: boolean;
+}
+
+const Button = styled.button<ButtonProps>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -19,6 +23,11 @@ const Button = styled.button`
     background-color: ${props => props.theme.colors.secondary};
     color: ${props => props.theme.colors.primary};
   }
+
+  ${props => props.selected && `
+    background-color: ${props.theme.colors.secondary};
+    color: ${props.theme.colors.primary};
+  `}
 
   img {
     height: 100%;

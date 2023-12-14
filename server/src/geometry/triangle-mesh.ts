@@ -226,4 +226,8 @@ export default class TriangleMesh {
 
     fs.writeFileSync(filename, objFileContent);
   }
+
+  public toString(): string {
+    return `TriangleMesh(vertices: ${this.vertices.length}, triangles: ${this.triangles.length})`;
+  }
 }

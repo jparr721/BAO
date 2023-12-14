@@ -4,32 +4,38 @@ import BaseContainer from "../base-contaner";
 import Button from "../button";
 import GridContainer from "../grid-container";
 import GridItem from "../grid-item";
-import { faChevronCircleDown, faCoffee, faMouse, faMousePointer } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faSquare } from "@fortawesome/free-solid-svg-icons";
 import DropdownButton from "../dropdown-button";
+import { useState } from "react";
+import Modal from "../modal/modal";
+import SimulationForm from "./simulation-form";
 
 const Toolbar = () => {
-    const handleSelect = (item) => {
-        console.log("CALLED");
-        console.log('Selected item:', item.label);
+    const [collisionZoneButtonSelected, setCollisionZoneButtonSelected] = useState(false);
+    const [showNewSimulationModal, setShowNewSimulationModal] = useState(false);
+
+    const handleSelectFileMenu = (item) => {
+        console.log(item.label);
+        setShowNewSimulationModal(!showNewSimulationModal);
     };
+
     return (
         <BaseContainer>
             <GridContainer>
                 <GridItem justifycontent="flex-start">
-                    <Button>
-                        <img src={IMAGES.LogoTiny} />
-                    </Button>
-                    <Button>File</Button>
-                    <Button>
-                        <FontAwesomeIcon icon={faCoffee} />
-                    </Button>
                     <DropdownButton
-                        items={[{ label: 'Option 1' }, { label: 'Option 2' }]}
-                        onSelectItem={handleSelect}
+                        items={[{ label: 'New' }]}
+                        onSelectItem={handleSelectFileMenu}
                     >
-                        <FontAwesomeIcon icon={faMousePointer} />
-                        <FontAwesomeIcon icon={faChevronCircleDown} />
+                        <img src={IMAGES.LogoTiny} />
+                        <FontAwesomeIcon icon={faChevronDown} />
                     </DropdownButton>
+                    <Modal showModal={showNewSimulationModal} setShowModal={setShowNewSimulationModal}>
+                        <SimulationForm meshOptions={['bunny']} energyTypeOptions={['snh', 'stvk']} />
+                    </Modal>
+                    <Button onClick={() => setCollisionZoneButtonSelected(!collisionZoneButtonSelected)} selected={collisionZoneButtonSelected}>
+                        <FontAwesomeIcon icon={faSquare} />
+                    </Button>
                 </GridItem>
                 <GridItem>
                     <p>Project Name</p>
