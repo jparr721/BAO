@@ -4,11 +4,9 @@ import { join } from "path";
 import { ok } from "../http-response";
 import Vector from "../../linear-algebra/vector";
 import TriangleMesh from "../../geometry/triangle-mesh";
-import STVK from "../../material/stvk";
 import ForwardEulerArea from "../../integrator/forward-euler-area";
 import SNH from "../../material/snh";
 import { computeLambda, computeMu } from "../../material/material";
-import MutationRequest from "../mutation-request";
 
 export async function runSimulation(req: Request, res: Response) {
   const { vertices, indices: triangles } = readTriangles2D(

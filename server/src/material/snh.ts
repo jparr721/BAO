@@ -2,13 +2,8 @@ import Matrix from "../linear-algebra/matrix";
 import { NonLinearMaterial } from "./material";
 
 export default class SNH extends NonLinearMaterial {
-  private lambda: number;
-  private mu: number;
-
   constructor(lambda: number, mu: number) {
-    super("SNH");
-    this.lambda = lambda + mu;
-    this.mu = mu;
+    super("SNH", lambda + mu, mu);
   }
 
   public psi(F: Matrix): number {

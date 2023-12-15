@@ -1,12 +1,18 @@
-import CreateSimulation from "../controllers/sim/create-simulation.type";
+import CreateSimulation from "../controllers/simulation/create-simulation.type";
 import readMeshFromStoreByName from "../geometry/read-mesh-store";
 import TriangleMesh from "../geometry/triangle-mesh";
+import { AreaIntegratorPayload } from "../integrator/area-intergrator";
 import ForwardEulerArea from "../integrator/forward-euler-area";
 import Vector from "../linear-algebra/vector";
 import { computeLambda, computeMu } from "../material/material";
 import SNH from "../material/snh";
 import STVK from "../material/stvk";
 import { SimulationFrame, SimulationPayload } from "./simulation-payload.type";
+
+export interface SimulationJSONPayload {
+  availableFrames: number;
+  simulation: AreaIntegratorPayload;
+}
 
 export default class Simulation {
   private frameno: number = -1;
@@ -59,6 +65,13 @@ export default class Simulation {
 
   public toString() {
     return `Simulation(${this.mesh.toString()}, ${this.energy.toString()}, ${this.integrator.toString()})`;
+  }
+
+  public toJSON(): SimulationJSONPayload {
+    return {
+      availableFrames: this.frameno,
+      simulation: this.integrator.toJSON(),
+    };
   }
 
   public addGravity(g: Vector) {

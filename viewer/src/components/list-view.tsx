@@ -11,7 +11,7 @@ const ListView = styled.ul`
     align-items: flex-start;
     color: ${props => props.theme.colors.secondary};
     background-color: ${props => props.theme.colors.primary};
-    :hover {
+    li:hover {
         cursor: pointer;
         color: ${props => props.theme.colors.primary};
         background-color: ${props => props.theme.colors.secondary};

@@ -2,13 +2,8 @@ import Matrix from "../linear-algebra/matrix";
 import { NonLinearMaterial } from "./material";
 
 export default class STVK extends NonLinearMaterial {
-  private lambda: number;
-  private mu: number;
-
   constructor(lambda: number, mu: number) {
-    super("STVK");
-    this.lambda = lambda;
-    this.mu = mu;
+    super("STVK", lambda, mu);
   }
 
   public psi(F: Matrix): number {

@@ -16,5 +16,5 @@ export default async function createSimulation(
     Simulation.fromOptions(req.body)
   );
 
-  ok(res, { cache: cache.toString() });
+  ok(res, { cache: cache.at(req.body.simulationName).toJSON() });
 }

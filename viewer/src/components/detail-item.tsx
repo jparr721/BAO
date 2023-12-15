@@ -13,11 +13,6 @@ const DetailItem = styled.details`
         color: ${props => props.theme.colors.secondary};
         border: none;
         border-radius: 0;
-        cursor: pointer;
-        &:hover {
-            background-color: ${props => props.theme.colors.secondary};
-            color: ${props => props.theme.colors.primary};
-        }
     }
 `;
 

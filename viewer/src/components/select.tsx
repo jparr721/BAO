@@ -8,7 +8,8 @@ const Select = styled.select`
     height: 100%;
     width: 100%;
     overflow: auto;
-    text-align: center;
+    text-align: left;
+    padding: 0.6em 1.2em;
 `;
 
 export default Select;

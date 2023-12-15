@@ -4,6 +4,13 @@ import fs from "fs";
 import Vector from "../linear-algebra/vector";
 import Matrix from "../linear-algebra/matrix";
 
+export interface TriangleMeshPayload {
+  vertices: number;
+  triangles: number;
+  uniformMass: number;
+  collisionEps: number;
+}
+
 export default class TriangleMesh {
   // The simulation vertices (mutates)
   public vertices: Vector[];
@@ -229,5 +236,14 @@ export default class TriangleMesh {
 
   public toString(): string {
     return `TriangleMesh(vertices: ${this.vertices.length}, triangles: ${this.triangles.length})`;
+  }
+
+  public toJSON(): TriangleMeshPayload {
+    return {
+      vertices: this.vertices.length,
+      triangles: this.triangles.length,
+      uniformMass: this.M.get(0, 0),
+      collisionEps: this.collisionEps,
+    };
   }
 }

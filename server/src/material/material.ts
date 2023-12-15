@@ -87,11 +87,21 @@ export abstract class LinearMaterial {
   }
 }
 
+export interface NonLinearMaterialPayload {
+  name: string;
+  lambda: number;
+  mu: number;
+}
+
 export abstract class NonLinearMaterial {
   protected name: string;
+  protected lambda: number;
+  protected mu: number;
 
-  constructor(name: string) {
+  constructor(name: string, lambda: number, mu: number) {
     this.name = name;
+    this.lambda = lambda;
+    this.mu = mu;
   }
 
   /**
@@ -163,7 +173,15 @@ export abstract class NonLinearMaterial {
   }
 
   public toString(): string {
-    return `NonLinearMaterial(${this.name})`;
+    return `NonLinearMaterial(name=${this.name} lambda=${this.lambda} mu=${this.mu})`;
+  }
+
+  public toJSON(): NonLinearMaterialPayload {
+    return {
+      name: this.name,
+      lambda: this.lambda,
+      mu: this.mu,
+    };
   }
 }
 

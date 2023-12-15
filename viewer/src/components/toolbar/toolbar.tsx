@@ -9,15 +9,26 @@ import DropdownButton from "../dropdown-button";
 import { useState } from "react";
 import Modal from "../modal/modal";
 import SimulationForm from "./simulation-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import CreateSimulation from "../../models/simulation/create-simulation.type";
+import createSimulation from "../../net/simulation/create-simulation";
 
 const Toolbar = () => {
+    const queryClient = useQueryClient();
+
     const [collisionZoneButtonSelected, setCollisionZoneButtonSelected] = useState(false);
     const [showNewSimulationModal, setShowNewSimulationModal] = useState(false);
 
     const handleSelectFileMenu = (item) => {
-        console.log(item.label);
         setShowNewSimulationModal(!showNewSimulationModal);
     };
+
+    const createSimulationMutation = useMutation({
+        mutationFn: (simulation: CreateSimulation) => {
+            queryClient.invalidateQueries({ queryKey: ['loadSimulationCache'] });
+            return createSimulation(simulation);
+        },
+    });
 
     return (
         <BaseContainer>
@@ -31,7 +42,7 @@ const Toolbar = () => {
                         <FontAwesomeIcon icon={faChevronDown} />
                     </DropdownButton>
                     <Modal showModal={showNewSimulationModal} setShowModal={setShowNewSimulationModal}>
-                        <SimulationForm meshOptions={['bunny']} energyTypeOptions={['snh', 'stvk']} />
+                        <SimulationForm meshOptions={['bunny']} energyTypeOptions={['snh', 'stvk']} createSimulationMutation={createSimulationMutation} closeModal={() => setShowNewSimulationModal(false)} />
                     </Modal>
                     <Button onClick={() => setCollisionZoneButtonSelected(!collisionZoneButtonSelected)} selected={collisionZoneButtonSelected}>
                         <FontAwesomeIcon icon={faSquare} />

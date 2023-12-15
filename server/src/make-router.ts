@@ -1,7 +1,7 @@
 import { Express } from "express";
 import HealthRouter from "./routes/healthz";
 import MeshRouter from "./routes/mesh";
-import SimRouter from "./routes/sim";
+import SimRouter from "./routes/simulation";
 import logger from "./logger";
 
 function logRoutes(app: Express) {

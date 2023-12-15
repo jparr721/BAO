@@ -1,7 +1,11 @@
-import Simulation from "./simulation";
+import Simulation, { SimulationJSONPayload } from "./simulation";
 
-export class SimCache {
-  private static _instance: SimCache;
+export interface SimulationCachePayload {
+  [key: string]: SimulationJSONPayload;
+}
+
+export class SimulationCache {
+  private static _instance: SimulationCache;
 
   private cache: Record<string, Simulation>;
 
@@ -19,11 +23,21 @@ export class SimCache {
     return cacheString;
   }
 
-  public static instance(): SimCache {
-    if (!SimCache._instance) {
-      SimCache._instance = new SimCache();
+  public toJSON(): SimulationCachePayload {
+    const payload: SimulationCachePayload = {};
+
+    for (const key in this.cache) {
+      payload[key] = this.cache[key].toJSON();
     }
-    return SimCache._instance;
+
+    return payload;
+  }
+
+  public static instance(): SimulationCache {
+    if (!SimulationCache._instance) {
+      SimulationCache._instance = new SimulationCache();
+    }
+    return SimulationCache._instance;
   }
 
   public addSimulation(key: string, sim: Simulation) {
@@ -33,15 +47,23 @@ export class SimCache {
     this.cache[key] = sim;
   }
 
+  public at(key: string): Simulation {
+    if (!this.exists(key)) {
+      throw new Error(`Simulation with key '${key}' does not exist.`);
+    }
+
+    return this.cache[key];
+  }
+
   public exists(key: string): boolean {
     return !!this.cache[key];
   }
 }
 
 function addSimulationToCache(key: string, sim: Simulation): void {
-  SimCache.instance().addSimulation(key, sim);
+  SimulationCache.instance().addSimulation(key, sim);
 }
 
-export function useSimCache(): [SimCache, typeof addSimulationToCache] {
-  return [SimCache.instance(), addSimulationToCache];
+export function useSimCache(): [SimulationCache, typeof addSimulationToCache] {
+  return [SimulationCache.instance(), addSimulationToCache];
 }
